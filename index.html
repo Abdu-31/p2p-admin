@@ -286,9 +286,7 @@ function doLogin() {
     });
 }
 
-function getAPI() {
-  return window.API_BASE || localStorage.getItem('apiBase') || 'https://sturdy-waddle-production-f4cb.up.railway.app';
-}
+function getAPI() { return 'https://sturdy-waddle-production-f4cb.up.railway.app'; }
 
 // ── Navigation ────────────────────────────────────────────────────────────────
 function showTab(name) {
@@ -522,9 +520,7 @@ function fmtETB(n) {
 
 // Always show login page - no auto-login for security
 // Only auto-fill the API base if set
-function getAPI() {
-  return window.API_BASE || localStorage.getItem('apiBase') || 'https://sturdy-waddle-production-f4cb.up.railway.app';
-}
+function getAPI() { return 'https://sturdy-waddle-production-f4cb.up.railway.app'; }
 </script>
 </body>
 </html>
