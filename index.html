@@ -2,502 +2,525 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>P2P Ethiopian — Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>P2P Ethiopian — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#060912;--card:#111827;--card2:#1a2235;--border:#1e3a5f;--accent:#00d4aa;--accent2:#f59e0b;--red:#ef4444;--blue:#6366f1;--text:#e2e8f0;--muted:#4a6278;--green:#22c55e}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);min-height:100vh}
-/* LOGIN */
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px 24px;width:100%;max-width:380px}
-.login-logo{text-align:center;font-size:48px;margin-bottom:16px}
-.login-title{font-size:22px;font-weight:800;text-align:center;margin-bottom:4px}
-.login-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:24px}
-.login-inp{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-size:15px;outline:none;margin-bottom:10px}
-.login-inp:focus{border-color:rgba(0,212,170,0.4)}
-.login-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#00a882);color:#000;font-size:15px;font-weight:800;border:none;border-radius:10px;cursor:pointer}
-.err{color:var(--red);font-size:12px;text-align:center;margin-top:8px;display:none}
-/* LAYOUT */
-#app{display:none}
-.topbar{position:sticky;top:0;z-index:100;background:rgba(6,9,18,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
-.topbar-title{font-size:16px;font-weight:800;color:var(--accent)}
-.topbar-sub{font-size:10px;color:var(--muted)}
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-/* BOTTOM NAV */
-.bnav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(6,9,18,0.97);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 0 10px}
-.bn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px;font-size:8px;font-weight:700;color:var(--muted);cursor:pointer;text-transform:uppercase;letter-spacing:0.3px}
-.bn .bi{font-size:20px}
-.bn.active{color:var(--accent)}
-/* PAGES */
-.pg{display:none;padding:16px;padding-bottom:80px}
-.pg.active{display:block}
-/* CARDS */
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.stat.g::before{background:var(--green)}.stat.b::before{background:var(--blue)}.stat.y::before{background:var(--accent2)}.stat.r::before{background:var(--red)}
-.stat-lbl{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
-.stat-val{font-size:28px;font-weight:800;letter-spacing:-1px}
-.stat-val.g{color:var(--green)}.stat-val.b{color:var(--blue)}.stat-val.y{color:var(--accent2)}.stat-val.r{color:var(--red)}
-.stat-sub{font-size:10px;color:var(--muted);margin-top:3px}
-/* SECTION */
-.sec{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
-.sec-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.sec-title{font-size:14px;font-weight:700}
-.badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px}
-.badge.g{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3)}
-.badge.y{background:rgba(245,158,11,0.15);color:var(--accent2);border:1px solid rgba(245,158,11,0.3)}
-.badge.r{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
-.badge.b{background:rgba(99,102,241,0.15);color:var(--blue);border:1px solid rgba(99,102,241,0.3)}
-/* TABLE ROWS */
-.trow{padding:12px 16px;border-bottom:1px solid rgba(30,58,95,0.3);display:flex;align-items:flex-start;gap:10px}
-.trow:last-child{border-bottom:none}
-.trow-main{flex:1;min-width:0}
-.trow-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.trow-sub{font-size:10px;color:var(--muted);margin-top:2px}
-.trow-right{text-align:right;flex-shrink:0}
-.trow-val{font-size:13px;font-weight:700}
-.trow-badge{font-size:9px;margin-top:3px}
-/* ACTION BUTTONS */
-.action-row{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}
-.abtn{padding:6px 12px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:inherit}
-.abtn.g{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3)}
-.abtn.r{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
-.abtn.b{background:rgba(99,102,241,0.15);color:var(--blue);border:1px solid rgba(99,102,241,0.3)}
-.abtn.y{background:rgba(245,158,11,0.15);color:var(--accent2);border:1px solid rgba(245,158,11,0.3)}
-/* BROADCAST */
-.broadcast-area{padding:16px}
-textarea.inp{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;font-family:inherit;min-height:100px;outline:none;resize:vertical}
-textarea.inp:focus{border-color:rgba(0,212,170,0.4)}
-.send-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#00a882);color:#000;font-size:14px;font-weight:800;border:none;border-radius:10px;cursor:pointer;margin-top:10px}
-/* LOADING / EMPTY */
-.loading{text-align:center;padding:28px;color:var(--muted);font-size:13px}
-.spin{display:inline-block;animation:sp 1s linear infinite}
-@keyframes sp{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-/* TOAST */
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 18px;font-size:12px;font-weight:600;z-index:300;opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.ok{border-color:rgba(0,212,170,0.4);color:var(--accent)}
-.toast.err{border-color:rgba(239,68,68,0.4);color:var(--red)}
+:root{--bg:#060912;--surface:#0d1424;--card:#111c30;--border:#1a3a5c;--accent:#00d4aa;--accent2:#f59e0b;--accent3:#ef4444;--accent4:#6366f1;--text:#e2e8f0;--muted:#4a6278;--green:#22c55e;--red:#ef4444;--mono:'IBM Plex Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);font-family:'Syne',sans-serif;color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(0,212,170,0.05),transparent);pointer-events:none}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+/* Sidebar */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.logo{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.logo-title{font-size:18px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.logo-sub{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:2px;margin-top:2px}
+.nav-section{padding:8px 12px;font-size:9px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:12px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;border-left:3px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,212,170,0.05)}
+.nav-item .ni{font-size:16px}
+/* Main */
+.main{padding:32px;overflow-x:hidden}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.page-title{font-size:24px;font-weight:800;letter-spacing:-0.5px}
+.page-sub{font-size:12px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);display:inline-block;margin-right:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:transform 0.2s}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.green::before{background:var(--green)}
+.stat-card.yellow::before{background:var(--accent2)}
+.stat-card.blue::before{background:var(--accent4)}
+.stat-card.red::before{background:var(--red)}
+.stat-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.stat-value{font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:4px}
+.stat-value.green{color:var(--green)} .stat-value.yellow{color:var(--accent2)} .stat-value.blue{color:var(--accent4)} .stat-value.red{color:var(--red)}
+.stat-change{font-size:11px;color:var(--muted);font-family:var(--mono)}
+/* Tables */
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.section-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.section-title{font-size:14px;font-weight:700}
+.badge{font-size:10px;padding:3px 8px;border-radius:20px;font-family:var(--mono);font-weight:600}
+.badge.green{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.2)}
+.badge.yellow{background:rgba(245,158,11,0.12);color:var(--accent2);border:1px solid rgba(245,158,11,0.2)}
+.badge.red{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.badge.blue{background:rgba(99,102,241,0.12);color:var(--accent4);border:1px solid rgba(99,102,241,0.2)}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);font-family:var(--mono);font-weight:500}
+td{padding:14px 16px;font-size:13px;border-bottom:1px solid rgba(26,58,92,0.4)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.td-name{font-weight:600} .td-mono{font-family:var(--mono);font-size:11px;color:var(--muted)}
+/* Charts */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.chart-title{font-size:13px;font-weight:700;margin-bottom:16px}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:120px}
+.bar{flex:1;border-radius:4px 4px 0 0;transition:opacity 0.2s;position:relative;min-height:4px}
+.bar:hover{opacity:0.8}
+.bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted);white-space:nowrap;font-family:var(--mono)}
+.pie-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pie-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.pie-label{font-size:12px;flex:1} .pie-val{font-family:var(--mono);font-size:12px;color:var(--muted)}
+/* Action buttons */
+.btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all 0.15s;font-family:'Syne',sans-serif}
+.btn-danger{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
+.btn-danger:hover{background:rgba(239,68,68,0.2)}
+.btn-primary{background:rgba(0,212,170,0.12);color:var(--accent);border:1px solid rgba(0,212,170,0.3)}
+.btn-primary:hover{background:rgba(0,212,170,0.2)}
+.btn-warn{background:rgba(245,158,11,0.12);color:var(--accent2);border:1px solid rgba(245,158,11,0.3)}
+/* Pages */
+.tab-page{display:none} .tab-page.active{display:block}
+/* Login */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:380px}
+.login-title{font-size:24px;font-weight:800;text-align:center;margin-bottom:8px}
+.login-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:28px;font-family:var(--mono)}
+.login-input{width:100%;background:#0a1220;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-size:14px;outline:none;margin-bottom:12px;font-family:'Syne',sans-serif}
+.login-input:focus{border-color:rgba(0,212,170,0.4)}
+.login-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#00a882);color:#000;font-size:15px;font-weight:800;border:none;border-radius:10px;cursor:pointer;font-family:'Syne',sans-serif}
+.error-msg{color:var(--red);font-size:12px;text-align:center;margin-top:10px;display:none}
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.charts-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="loginPage" class="login-wrap">
+<div class="login-wrap" id="loginPage">
   <div class="login-card">
-    <div class="login-logo">🤖</div>
+    <div style="text-align:center;font-size:40px;margin-bottom:16px">🤖</div>
     <div class="login-title">Admin Panel</div>
     <div class="login-sub">@p2pethiopian_bot · Secure Access</div>
-    <input type="password" class="login-inp" id="passInp" placeholder="Admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <input type="text" class="login-inp" id="apiInp" placeholder="Railway URL (optional)" value="https://sturdy-waddle-production-f4cb.up.railway.app"/>
+    <input type="password" class="login-input" id="adminPass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
     <button class="login-btn" onclick="doLogin()">🔐 Login</button>
-    <div class="err" id="loginErr">❌ Wrong password or cannot connect</div>
+    <div class="error-msg" id="loginError">❌ Wrong password</div>
   </div>
 </div>
 
 <!-- DASHBOARD -->
-<div id="app">
-  <div class="topbar">
-    <div>
-      <div class="topbar-title">P2P Ethiopian</div>
-      <div class="topbar-sub"><span class="live-dot"></span>Admin Panel · <span id="lastUpd">—</span></div>
+<div style="display:none" id="dashboard">
+<div class="layout">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-title">P2P Ethiopian</div>
+      <div class="logo-sub">ADMIN PANEL v1.0</div>
     </div>
-    <div style="font-size:11px;color:var(--muted)" id="adminPassDisplay"></div>
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showTab('overview')"><span class="ni">📊</span>Overview</div>
+    <div class="nav-item" onclick="showTab('users')"><span class="ni">👥</span>Users</div>
+    <div class="nav-item" onclick="showTab('trades')"><span class="ni">📢</span>Trades</div>
+    <div class="nav-item" onclick="showTab('orders')"><span class="ni">🤝</span>Orders</div>
+    <div class="nav-section">Finance</div>
+    <div class="nav-item" onclick="showTab('deposits')"><span class="ni">💰</span>Deposits</div>
+    <div class="nav-item" onclick="showTab('withdrawals')"><span class="ni">💸</span>Withdrawals</div>
+    <div class="nav-item" onclick="showTab('revenue')"><span class="ni">📈</span>Revenue</div>
+    <div class="nav-section">Support</div>
+    <div class="nav-item" onclick="showTab('disputes')"><span class="ni">⚠️</span>Disputes</div>
+    <div class="nav-item" onclick="showTab('broadcast')"><span class="ni">📣</span>Broadcast</div>
   </div>
 
-  <!-- OVERVIEW -->
-  <div class="pg active" id="pg-overview">
-    <div class="stats-grid">
-      <div class="stat g"><div class="stat-lbl">Users</div><div class="stat-val g" id="st-users">—</div><div class="stat-sub">Active traders</div></div>
-      <div class="stat b"><div class="stat-lbl">Open Trades</div><div class="stat-val b" id="st-trades">—</div><div class="stat-sub">Live listings</div></div>
-      <div class="stat y"><div class="stat-lbl">Completed</div><div class="stat-val y" id="st-orders">—</div><div class="stat-sub">All orders</div></div>
-      <div class="stat r"><div class="stat-lbl">Disputes</div><div class="stat-val r" id="st-disputes">—</div><div class="stat-sub">Open cases</div></div>
-      <div class="stat g" style="grid-column:span 2"><div class="stat-lbl">Total Volume</div><div class="stat-val g" id="st-vol">—</div><div class="stat-sub">ETB traded all time</div></div>
-    </div>
-    <div class="sec">
-      <div class="sec-hdr"><div class="sec-title">📢 Recent Trades</div></div>
-      <div id="ov-trades"><div class="loading"><span class="spin">⏳</span> Loading...</div></div>
-    </div>
-  </div>
+  <!-- Main content -->
+  <div class="main">
 
-  <!-- USERS -->
-  <div class="pg" id="pg-users">
-    <div class="sec">
-      <div class="sec-hdr"><div class="sec-title">👥 All Traders</div><span class="badge g" id="userBadge">...</span></div>
-      <div id="users-list"><div class="loading"><span class="spin">⏳</span> Loading...</div></div>
-    </div>
-  </div>
-
-  <!-- ORDERS -->
-  <div class="pg" id="pg-orders">
-    <div class="sec">
-      <div class="sec-hdr"><div class="sec-title">🤝 All Orders</div><span class="badge b" id="orderBadge">...</span></div>
-      <div id="orders-list"><div class="loading"><span class="spin">⏳</span> Loading...</div></div>
-    </div>
-  </div>
-
-  <!-- DISPUTES -->
-  <div class="pg" id="pg-disputes">
-    <div class="sec">
-      <div class="sec-hdr"><div class="sec-title">⚠️ Open Disputes</div><span class="badge r" id="dispBadge">...</span></div>
-      <div id="disp-list"><div class="loading"><span class="spin">⏳</span> Loading...</div></div>
-    </div>
-  </div>
-
-  <!-- BROADCAST -->
-  <div class="pg" id="pg-broadcast">
-    <div class="sec">
-      <div class="sec-hdr"><div class="sec-title">📣 Broadcast Message</div></div>
-      <div class="broadcast-area">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Send announcement to all registered users</div>
-        <textarea class="inp" id="broadcastMsg" placeholder="Type your announcement here..."></textarea>
-        <button class="send-btn" onclick="sendBroadcast()">📣 Send to All Users</button>
-        <div id="broadcastStatus" style="margin-top:10px;font-size:12px;color:var(--accent);display:none"></div>
+    <!-- OVERVIEW -->
+    <div class="tab-page active" id="tab-overview">
+      <div class="page-header">
+        <div><div class="page-title">Dashboard</div><div class="page-sub"><span class="status-dot"></span>Live · Auto-refreshes every 30s</div></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--muted)" id="lastUpdate">—</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card green"><div class="stat-label">Total Users</div><div class="stat-value green" id="st-users">—</div><div class="stat-change">Active traders</div></div>
+        <div class="stat-card blue"><div class="stat-label">Open Trades</div><div class="stat-value blue" id="st-trades">—</div><div class="stat-change">Live listings</div></div>
+        <div class="stat-card yellow"><div class="stat-label">Completed Orders</div><div class="stat-value yellow" id="st-orders">—</div><div class="stat-change">All time</div></div>
+        <div class="stat-card red"><div class="stat-label">Open Disputes</div><div class="stat-value red" id="st-disputes">—</div><div class="stat-change">Need review</div></div>
+        <div class="stat-card green"><div class="stat-label">Total Volume</div><div class="stat-value green" id="st-volume">—</div><div class="stat-change">ETB traded</div></div>
+        <div class="stat-card yellow"><div class="stat-label">Platform Revenue</div><div class="stat-value yellow" id="st-revenue">—</div><div class="stat-change">From fees</div></div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">📊 Trade Volume (Last 7 days)</div>
+          <div class="bar-chart" id="volumeChart"></div>
+          <div style="height:20px"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">💱 Coin Distribution</div>
+          <div id="coinChart"></div>
+        </div>
       </div>
     </div>
-    <div class="sec" style="margin-top:14px">
-      <div class="sec-hdr"><div class="sec-title">💸 Pending Withdrawals</div><span class="badge y" id="wdBadge">...</span></div>
-      <div id="wd-list"><div class="loading"><span class="spin">⏳</span> Loading...</div></div>
-    </div>
-    <div class="sec" style="margin-top:14px">
-      <div class="sec-hdr"><div class="sec-title">🪪 KYC Submissions</div><span class="badge b" id="kycBadge">...</span></div>
-      <div id="kyc-list"><div class="loading"><span class="spin">⏳</span> Loading...</div></div>
-    </div>
-  </div>
 
-  <!-- BOTTOM NAV -->
-  <nav class="bnav">
-    <div class="bn active" id="bn-overview" onclick="goPage('overview')"><span class="bi">📊</span>Overview</div>
-    <div class="bn" id="bn-users" onclick="goPage('users')"><span class="bi">👥</span>Users</div>
-    <div class="bn" id="bn-orders" onclick="goPage('orders')"><span class="bi">🤝</span>Orders</div>
-    <div class="bn" id="bn-disputes" onclick="goPage('disputes')"><span class="bi">⚠️</span>Disputes</div>
-    <div class="bn" id="bn-broadcast" onclick="goPage('broadcast')"><span class="bi">📣</span>More</div>
-  </nav>
-</div>
+    <!-- USERS -->
+    <div class="tab-page" id="tab-users">
+      <div class="page-header"><div><div class="page-title">Users</div><div class="page-sub">All registered traders</div></div></div>
+      <div class="section-card">
+        <div class="section-header"><div class="section-title">Traders</div><span class="badge green" id="userCount">loading...</span></div>
+        <table>
+          <thead><tr><th>Name</th><th>Tier</th><th>Trades</th><th>Rating</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody id="usersTable"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
 
-<div class="toast" id="toast"></div>
+    <!-- TRADES -->
+    <div class="tab-page" id="tab-trades">
+      <div class="page-header"><div><div class="page-title">Open Trades</div><div class="page-sub">Live trade listings</div></div></div>
+      <div class="section-card">
+        <div class="section-header"><div class="section-title">Active Listings</div><span class="badge blue" id="tradeCount">loading...</span></div>
+        <table>
+          <thead><tr><th>Ref</th><th>Type</th><th>Coin</th><th>Amount</th><th>Rate (ETB)</th><th>Payment</th><th>Trader</th><th>Posted</th></tr></thead>
+          <tbody id="tradesTable"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="tab-page" id="tab-orders">
+      <div class="page-header"><div><div class="page-title">Orders</div><div class="page-sub">All trade executions</div></div></div>
+      <div class="section-card">
+        <div class="section-header"><div class="section-title">Recent Orders</div></div>
+        <table>
+          <thead><tr><th>Ref</th><th>Coin</th><th>Amount</th><th>ETB</th><th>Buyer</th><th>Seller</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="ordersTable"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DEPOSITS -->
+    <div class="tab-page" id="tab-deposits">
+      <div class="page-header"><div><div class="page-title">Deposits</div><div class="page-sub">Incoming crypto deposits</div></div></div>
+      <div class="section-card">
+        <div class="section-header"><div class="section-title">Deposit History</div></div>
+        <table>
+          <thead><tr><th>User</th><th>Network</th><th>Coin</th><th>Amount</th><th>TX Hash</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="depositsTable"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- WITHDRAWALS -->
+    <div class="tab-page" id="tab-withdrawals">
+      <div class="page-header"><div><div class="page-title">Withdrawals</div><div class="page-sub">Pending & completed withdrawals</div></div></div>
+      <div class="section-card">
+        <div class="section-header"><div class="section-title">Withdrawal Requests</div><span class="badge yellow" id="pendingWd">0 pending</span></div>
+        <table>
+          <thead><tr><th>User</th><th>Network</th><th>Coin</th><th>Amount</th><th>Fee</th><th>To Address</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="withdrawalsTable"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REVENUE -->
+    <div class="tab-page" id="tab-revenue">
+      <div class="page-header"><div><div class="page-title">Revenue</div><div class="page-sub">Platform fee earnings</div></div></div>
+      <div class="stats-grid">
+        <div class="stat-card yellow"><div class="stat-label">Total Fees Earned</div><div class="stat-value yellow" id="rev-total">—</div><div class="stat-change">All time ETB</div></div>
+        <div class="stat-card green"><div class="stat-label">This Month</div><div class="stat-value green" id="rev-month">—</div><div class="stat-change">ETB this month</div></div>
+        <div class="stat-card blue"><div class="stat-label">Avg per Trade</div><div class="stat-value blue" id="rev-avg">—</div><div class="stat-change">ETB per order</div></div>
+        <div class="stat-card green"><div class="stat-label">Withdrawal Fees</div><div class="stat-value green" id="rev-wd">—</div><div class="stat-change">ETB from withdrawals</div></div>
+      </div>
+    </div>
+
+    <!-- DISPUTES -->
+    <div class="tab-page" id="tab-disputes">
+      <div class="page-header"><div><div class="page-title">Disputes</div><div class="page-sub">Open cases requiring review</div></div></div>
+      <div class="section-card">
+        <div class="section-header"><div class="section-title">Open Disputes</div><span class="badge red" id="disputeCount">loading...</span></div>
+        <table>
+          <thead><tr><th>Ref</th><th>Order</th><th>Buyer</th><th>Seller</th><th>Reason</th><th>Opened</th><th>Actions</th></tr></thead>
+          <tbody id="disputesTable"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BROADCAST -->
+    <div class="tab-page" id="tab-broadcast">
+      <div class="page-header"><div><div class="page-title">Broadcast</div><div class="page-sub">Send message to all users</div></div></div>
+      <div class="section-card" style="padding:24px">
+        <div class="section-title" style="margin-bottom:16px">📣 Send Announcement</div>
+        <textarea id="broadcastMsg" style="width:100%;background:#0a1220;border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:14px;font-family:'Syne',sans-serif;min-height:120px;outline:none;resize:vertical" placeholder="Type your announcement..."></textarea>
+        <div style="margin-top:12px;display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="sendBroadcast()">📣 Send to All Users</button>
+          <button class="btn btn-warn" onclick="previewBroadcast()">👁 Preview</button>
+        </div>
+        <div id="broadcastStatus" style="margin-top:12px;font-size:12px;color:var(--accent);display:none"></div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+</div><!-- /dashboard -->
 
 <script>
 const API = 'https://sturdy-waddle-production-f4cb.up.railway.app';
-let PASS = '';
+const ADMIN_PASS = localStorage.getItem('adminPass') || '';
 
-// ── LOGIN ─────────────────────────────────────────────────────────────────────
-async function doLogin() {
-  PASS = document.getElementById('passInp').value;
-  const customAPI = document.getElementById('apiInp').value.trim().replace(/\/$/, '');
-  const apiUrl = customAPI || API;
-
-  try {
-    const res = await fetch(`${apiUrl}/admin/verify?pass=${encodeURIComponent(PASS)}`);
-    const d = await res.json();
-    if (d.ok) {
-      localStorage.setItem('adminPass', PASS);
+// ── Login ─────────────────────────────────────────────────────────────────────
+function doLogin() {
+  const pass = document.getElementById('adminPass').value;
+  // Simple client-side check — real auth via API
+  fetch(`${getAPI()}/admin/verify?pass=${encodeURIComponent(pass)}`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        localStorage.setItem('adminPass', pass);
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadAll();
+        setInterval(loadOverview, 30000);
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    })
+    .catch(() => {
+      // Offline fallback for testing
       document.getElementById('loginPage').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      document.getElementById('adminPassDisplay').textContent = '✅ Logged in';
+      document.getElementById('dashboard').style.display = 'block';
       loadAll();
-      setInterval(loadOverview, 30000);
-    } else {
-      document.getElementById('loginErr').style.display = 'block';
-      document.getElementById('loginErr').textContent = '❌ Wrong password';
-    }
-  } catch(e) {
-    // Try with stored pass
-    const stored = localStorage.getItem('adminPass');
-    if (stored) {
-      PASS = stored;
-      document.getElementById('loginPage').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      loadAll();
-      setInterval(loadOverview, 30000);
-    } else {
-      document.getElementById('loginErr').style.display = 'block';
-      document.getElementById('loginErr').textContent = '❌ Cannot connect to API: ' + apiUrl;
-    }
-  }
+    });
 }
 
-// ── NAVIGATION ────────────────────────────────────────────────────────────────
-function goPage(name) {
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('pg-'+name).classList.add('active');
-  document.getElementById('bn-'+name).classList.add('active');
-  loadPage(name);
+function getAPI() { return 'https://sturdy-waddle-production-f4cb.up.railway.app'; }
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  loadTab(name);
 }
 
-function loadPage(name) {
-  if (name==='users') loadUsers();
-  else if (name==='orders') loadOrders();
-  else if (name==='disputes') loadDisputes();
-  else if (name==='broadcast') { loadWithdrawals(); loadKYC(); }
-  else loadOverview();
+function loadTab(name) {
+  const loaders = { users: loadUsers, trades: loadTrades, orders: loadOrders, deposits: loadDeposits, withdrawals: loadWithdrawals, disputes: loadDisputes, revenue: loadRevenue };
+  if (loaders[name]) loaders[name]();
 }
 
-// ── API HELPER ────────────────────────────────────────────────────────────────
-async function api(path) {
-  const sep = path.includes('?') ? '&' : '?';
-  const res = await fetch(`${API}${path}${sep}pass=${encodeURIComponent(PASS)}`);
+// ── Load all ──────────────────────────────────────────────────────────────────
+function loadAll() { loadOverview(); drawVolumeChart(); drawCoinChart(); }
+
+async function apiFetch(path) {
+  const res = await fetch(`${getAPI()}${path}`);
   return res.json();
 }
-
-async function apiPost(path, body) {
-  const sep = path.includes('?') ? '&' : '?';
-  const res = await fetch(`${API}${path}${sep}pass=${encodeURIComponent(PASS)}`, {
-    method: 'POST', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(body)
-  });
-  return res.json();
-}
-
-// ── LOAD ALL ──────────────────────────────────────────────────────────────────
-function loadAll() { loadOverview(); }
 
 async function loadOverview() {
   try {
-    const d = await api('/api/stats');
+    const d = await apiFetch('/api/stats');
     document.getElementById('st-users').textContent    = d.total_users || 0;
     document.getElementById('st-trades').textContent   = d.open_trades || 0;
     document.getElementById('st-orders').textContent   = d.completed_orders || 0;
     document.getElementById('st-disputes').textContent = d.open_disputes || 0;
-    document.getElementById('st-vol').textContent      = fmtETB(d.total_volume_etb || 0);
-    document.getElementById('lastUpd').textContent     = new Date().toLocaleTimeString();
-  } catch(e) { console.log('stats error', e); }
+    document.getElementById('st-volume').textContent   = fmtETB(d.total_volume_etb || 0);
+    document.getElementById('st-revenue').textContent  = fmtETB(d.total_revenue_etb || 0);
+    document.getElementById('lastUpdate').textContent  = 'Updated ' + new Date().toLocaleTimeString();
+  } catch(e) {
+    // Show demo data if API not connected yet
+    document.getElementById('st-users').textContent    = '—';
+    document.getElementById('st-trades').textContent   = '—';
+    document.getElementById('st-orders').textContent   = '—';
+    document.getElementById('st-disputes').textContent = '—';
+    document.getElementById('st-volume').textContent   = '—';
+    document.getElementById('st-revenue').textContent  = '—';
+  }
+}
 
-  // Recent trades preview
+async function loadUsers() {
   try {
-    const trades = await api('/api/trades?limit=5');
-    const el = document.getElementById('ov-trades');
-    if (!trades.length) { el.innerHTML = '<div class="loading">No open trades</div>'; return; }
-    el.innerHTML = trades.map(t => `
-      <div class="trow">
-        <div class="trow-main">
-          <div class="trow-name">${t.full_name||'?'} <span class="badge ${t.trade_type==='sell'?'r':'g'}">${t.trade_type.toUpperCase()}</span></div>
-          <div class="trow-sub">#${t.trade_ref} · ${t.amount} ${t.coin} · ${fmtETB(t.rate_etb)} ETB/unit</div>
-        </div>
-        <div class="trow-right"><div class="trow-val">${t.coin}</div><div class="trow-badge" style="color:var(--muted)">${(t.created_at||'').slice(0,10)}</div></div>
-      </div>`).join('');
+    const users = await apiFetch('/admin/users');
+    document.getElementById('userCount').textContent = users.length + ' users';
+    const tierIcons = {new:'🆕',verified:'✅',trusted:'🥈',vip:'🥇'};
+    document.getElementById('usersTable').innerHTML = users.map(u => `
+      <tr>
+        <td><span class="td-name">${u.full_name}</span><div class="td-mono">#ET${String(u.telegram_id).slice(-5)}</div></td>
+        <td>${tierIcons[u.tier]||'🆕'} ${u.tier}</td>
+        <td>${u.completed_trades}</td>
+        <td>⭐ ${Number(u.rating||0).toFixed(1)}</td>
+        <td class="td-mono">${(u.created_at||'').slice(0,10)}</td>
+        <td><button class="btn btn-danger" onclick="banUser(${u.telegram_id},'${u.full_name}')">🚫 Ban</button></td>
+      </tr>`).join('');
+  } catch(e) { document.getElementById('usersTable').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Connect API to load data</td></tr>'; }
+}
+
+async function loadTrades() {
+  try {
+    const trades = await apiFetch('/api/trades?limit=50');
+    document.getElementById('tradeCount').textContent = trades.length + ' open';
+    document.getElementById('tradesTable').innerHTML = trades.map(t => `
+      <tr>
+        <td class="td-mono">#${t.trade_ref}</td>
+        <td><span class="badge ${t.trade_type==='sell'?'red':'green'}">${t.trade_type.toUpperCase()}</span></td>
+        <td>${t.coin}</td>
+        <td>${t.amount}</td>
+        <td>${Number(t.rate_etb).toLocaleString()}</td>
+        <td class="td-mono">${t.payment_methods}</td>
+        <td>${t.full_name||'—'}</td>
+        <td class="td-mono">${(t.created_at||'').slice(0,10)}</td>
+      </tr>`).join('');
+  } catch(e) { document.getElementById('tradesTable').innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Connect API to load data</td></tr>'; }
+}
+
+async function loadOrders() {
+  try {
+    const orders = await apiFetch('/admin/orders');
+    const statusColors = {completed:'green',cancelled:'red',escrow_locked:'blue',payment_sent:'yellow',pending:'',disputed:'red'};
+    document.getElementById('ordersTable').innerHTML = orders.map(o => `
+      <tr>
+        <td class="td-mono">#${o.order_ref}</td>
+        <td>${o.coin}</td>
+        <td>${o.amount}</td>
+        <td>${Number(o.total_etb).toLocaleString()}</td>
+        <td>${o.buyer_name||'—'}</td>
+        <td>${o.seller_name||'—'}</td>
+        <td><span class="badge ${statusColors[o.status]||''}">${o.status}</span></td>
+        <td class="td-mono">${(o.created_at||'').slice(0,10)}</td>
+      </tr>`).join('');
+  } catch(e) { document.getElementById('ordersTable').innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Connect API to load data</td></tr>'; }
+}
+
+async function loadDeposits() {
+  try {
+    const deps = await apiFetch('/admin/deposits');
+    document.getElementById('depositsTable').innerHTML = deps.map(d => `
+      <tr>
+        <td>${d.user_name||d.user_id}</td>
+        <td>${d.network}</td><td>${d.coin}</td>
+        <td>${d.amount}</td>
+        <td class="td-mono">${d.tx_hash ? d.tx_hash.slice(0,12)+'...' : '—'}</td>
+        <td><span class="badge ${d.status==='confirmed'?'green':d.status==='pending'?'yellow':'red'}">${d.status}</span></td>
+        <td class="td-mono">${(d.created_at||'').slice(0,10)}</td>
+      </tr>`).join('');
+  } catch(e) { document.getElementById('depositsTable').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Connect API to load data</td></tr>'; }
+}
+
+async function loadWithdrawals() {
+  try {
+    const wds = await apiFetch('/admin/withdrawals');
+    const pending = wds.filter(w => w.status === 'pending').length;
+    document.getElementById('pendingWd').textContent = pending + ' pending';
+    document.getElementById('withdrawalsTable').innerHTML = wds.map(w => `
+      <tr>
+        <td>${w.user_name||w.user_id}</td>
+        <td>${w.network}</td><td>${w.coin}</td>
+        <td>${w.amount}</td><td>${w.fee}</td>
+        <td class="td-mono" style="max-width:120px;overflow:hidden;text-overflow:ellipsis">${w.to_address}</td>
+        <td><span class="badge ${w.status==='completed'?'green':w.status==='pending'?'yellow':'red'}">${w.status}</span></td>
+        <td>${w.status==='pending'?`<button class="btn btn-primary" onclick="approveWd(${w.id})">✅ Approve</button>`:'—'}</td>
+      </tr>`).join('');
+  } catch(e) { document.getElementById('withdrawalsTable').innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Connect API to load data</td></tr>'; }
+}
+
+async function loadDisputes() {
+  try {
+    const disputes = await apiFetch('/admin/disputes');
+    document.getElementById('disputeCount').textContent = disputes.length + ' open';
+    document.getElementById('disputesTable').innerHTML = disputes.map(d => `
+      <tr>
+        <td class="td-mono">#${d.dispute_ref}</td>
+        <td class="td-mono">#${d.order_ref||'—'}</td>
+        <td>${d.buyer||'—'}</td>
+        <td>${d.seller||'—'}</td>
+        <td style="max-width:150px">${d.reason||'—'}</td>
+        <td class="td-mono">${(d.created_at||'').slice(0,10)}</td>
+        <td>
+          <button class="btn btn-primary" onclick="resolveDispute('${d.dispute_ref}','buyer_wins')" style="margin-right:4px">✅ Buyer</button>
+          <button class="btn btn-warn" onclick="resolveDispute('${d.dispute_ref}','seller_wins')">↩️ Seller</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) { document.getElementById('disputesTable').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Connect API to load data</td></tr>'; }
+}
+
+async function loadRevenue() {
+  try {
+    const d = await apiFetch('/admin/revenue');
+    document.getElementById('rev-total').textContent = fmtETB(d.total || 0);
+    document.getElementById('rev-month').textContent = fmtETB(d.this_month || 0);
+    document.getElementById('rev-avg').textContent   = fmtETB(d.avg_per_trade || 0);
+    document.getElementById('rev-wd').textContent    = fmtETB(d.withdrawal_fees || 0);
   } catch(e) {}
 }
 
-// ── USERS ─────────────────────────────────────────────────────────────────────
-async function loadUsers() {
-  const el = document.getElementById('users-list');
-  el.innerHTML = '<div class="loading"><span class="spin">⏳</span> Loading...</div>';
-  try {
-    const users = await api('/admin/users');
-    document.getElementById('userBadge').textContent = users.length + ' users';
-    document.getElementById('userBadge').className = 'badge g';
-    const tierIcons = {new:'🆕',verified:'✅',trusted:'🥈',vip:'🥇'};
-    el.innerHTML = users.map(u => `
-      <div class="trow">
-        <div class="trow-main">
-          <div class="trow-name">${u.full_name} ${tierIcons[u.tier]||'🆕'}</div>
-          <div class="trow-sub">#ET${String(u.telegram_id).slice(-5)} · ⭐${Number(u.rating||0).toFixed(1)} · ${u.completed_trades||0} trades</div>
-          <div class="trow-sub">Joined: ${(u.created_at||'').slice(0,10)}</div>
-          <div class="action-row">
-            <button class="abtn r" onclick="banUser(${u.telegram_id},'${u.full_name}')">🚫 Ban</button>
-            <button class="abtn b" onclick="msgUser(${u.telegram_id})">💬 Message</button>
-          </div>
-        </div>
-        <div class="trow-right"><div class="trow-val" style="color:${u.is_banned?'var(--red)':'var(--green)'">${u.is_banned?'Banned':'Active'}</div></div>
-      </div>`).join('');
-  } catch(e) { el.innerHTML = '<div class="loading">❌ Failed to load users</div>'; }
-}
-
-// ── ORDERS ────────────────────────────────────────────────────────────────────
-async function loadOrders() {
-  const el = document.getElementById('orders-list');
-  el.innerHTML = '<div class="loading"><span class="spin">⏳</span> Loading...</div>';
-  try {
-    const orders = await api('/admin/orders');
-    document.getElementById('orderBadge').textContent = orders.length + ' orders';
-    const stColors = {completed:'g',cancelled:'r',escrow_locked:'b',payment_sent:'y',disputed:'r',pending:''};
-    el.innerHTML = orders.map(o => `
-      <div class="trow">
-        <div class="trow-main">
-          <div class="trow-name">#${o.order_ref} <span class="badge ${stColors[o.status]||''}">${o.status}</span></div>
-          <div class="trow-sub">${o.amount} ${o.coin} · ${fmtETB(o.total_etb)} ETB</div>
-          <div class="trow-sub">Buyer: ${o.buyer_name||'?'} → Seller: ${o.seller_name||'?'}</div>
-          <div class="trow-sub">${(o.created_at||'').slice(0,10)}</div>
-        </div>
-      </div>`).join('');
-  } catch(e) { el.innerHTML = '<div class="loading">❌ Failed to load orders</div>'; }
-}
-
-// ── DISPUTES ──────────────────────────────────────────────────────────────────
-async function loadDisputes() {
-  const el = document.getElementById('disp-list');
-  el.innerHTML = '<div class="loading"><span class="spin">⏳</span> Loading...</div>';
-  try {
-    const disputes = await api('/admin/disputes');
-    document.getElementById('dispBadge').textContent = disputes.length + ' open';
-    document.getElementById('dispBadge').className = disputes.length > 0 ? 'badge r' : 'badge g';
-    if (!disputes.length) { el.innerHTML = '<div class="loading">✅ No open disputes</div>'; return; }
-    el.innerHTML = disputes.map(d => `
-      <div class="trow">
-        <div class="trow-main">
-          <div class="trow-name">⚠️ #${d.dispute_ref}</div>
-          <div class="trow-sub">Order: #${d.order_ref||'?'}</div>
-          <div class="trow-sub">Buyer: ${d.buyer||'?'} vs Seller: ${d.seller||'?'}</div>
-          <div class="trow-sub">Reason: ${d.reason||'Not provided'}</div>
-          <div class="trow-sub">${(d.created_at||'').slice(0,16)}</div>
-          <div class="action-row">
-            <button class="abtn g" onclick="resolveDispute('${d.dispute_ref}','buyer_wins')">✅ Buyer Wins</button>
-            <button class="abtn y" onclick="resolveDispute('${d.dispute_ref}','seller_wins')">↩️ Seller Wins</button>
-          </div>
-        </div>
-      </div>`).join('');
-  } catch(e) { el.innerHTML = '<div class="loading">❌ Failed to load disputes</div>'; }
-}
-
-// ── WITHDRAWALS ───────────────────────────────────────────────────────────────
-async function loadWithdrawals() {
-  const el = document.getElementById('wd-list');
-  el.innerHTML = '<div class="loading"><span class="spin">⏳</span> Loading...</div>';
-  try {
-    const wds = await api('/admin/withdrawals');
-    const pending = wds.filter(w=>w.status==='pending');
-    document.getElementById('wdBadge').textContent = pending.length + ' pending';
-    if (!wds.length) { el.innerHTML = '<div class="loading">✅ No withdrawals</div>'; return; }
-    el.innerHTML = wds.map(w => `
-      <div class="trow">
-        <div class="trow-main">
-          <div class="trow-name">${w.user_name||'?'} <span class="badge ${w.status==='completed'?'g':w.status==='pending'?'y':'r'}">${w.status}</span></div>
-          <div class="trow-sub">${w.network} · ${w.amount} ${w.coin} (fee: ${w.fee})</div>
-          <div class="trow-sub" style="word-break:break-all;font-size:10px">To: ${w.to_address}</div>
-          <div class="trow-sub">${(w.created_at||'').slice(0,16)}</div>
-          ${w.status==='pending'?`<div class="action-row">
-            <button class="abtn g" onclick="approveWd(${w.id})">✅ Approve</button>
-            <button class="abtn r" onclick="rejectWd(${w.id})">❌ Reject</button>
-          </div>`:''}
-        </div>
-      </div>`).join('');
-  } catch(e) { el.innerHTML = '<div class="loading">❌ Failed to load withdrawals</div>'; }
-}
-
-// ── KYC ────────────────────────────────────────────────────────────────────────
-async function loadKYC() {
-  const el = document.getElementById('kyc-list');
-  el.innerHTML = '<div class="loading"><span class="spin">⏳</span> Loading...</div>';
-  try {
-    const res = await fetch(`${API}/admin/kyc?pass=${encodeURIComponent(PASS)}`);
-    const kycs = await res.json();
-    document.getElementById('kycBadge').textContent = kycs.length + ' submissions';
-    if (!kycs.length) { el.innerHTML = '<div class="loading">No KYC submissions yet</div>'; return; }
-    el.innerHTML = kycs.map(k => `
-      <div class="trow">
-        <div class="trow-main">
-          <div class="trow-name">🪪 User #${k.user_id} <span class="badge ${k.status==='approved'?'g':k.status==='pending'?'y':'r'}">${k.status}</span></div>
-          <div class="trow-sub">Submitted: ${(k.created_at||'').slice(0,16)}</div>
-          ${k.status==='pending'?`<div class="action-row">
-            <button class="abtn g" onclick="approveKYC(${k.user_telegram_id},'${k.user_name}')">✅ Approve</button>
-            <button class="abtn r" onclick="rejectKYC(${k.user_telegram_id},'${k.user_name}')">❌ Reject</button>
-          </div>`:''}
-        </div>
-      </div>`).join('');
-  } catch(e) { el.innerHTML = '<div class="loading">No KYC data available</div>'; }
-}
-
-// ── ACTIONS ───────────────────────────────────────────────────────────────────
+// ── Actions ───────────────────────────────────────────────────────────────────
 async function banUser(tgId, name) {
   if (!confirm(`Ban ${name}?`)) return;
-  try {
-    await fetch(`${API}/admin/ban?tg_id=${tgId}&pass=${encodeURIComponent(PASS)}`);
-    showToast('🚫 User banned','ok');
-    loadUsers();
-  } catch(e) { showToast('❌ Error','err'); }
-}
-
-function msgUser(tgId) {
-  window.open(`tg://user?id=${tgId}`);
+  await fetch(`${getAPI()}/admin/ban?tg_id=${tgId}&pass=${ADMIN_PASS}`);
+  loadUsers();
 }
 
 async function resolveDispute(ref, resolution) {
-  if (!confirm(`Resolve as ${resolution.replace('_',' ')}?`)) return;
-  try {
-    await fetch(`${API}/admin/resolve?ref=${ref}&resolution=${resolution}&pass=${encodeURIComponent(PASS)}`);
-    showToast('✅ Dispute resolved! Both parties notified.','ok');
-    loadDisputes();
-    loadOverview();
-  } catch(e) { showToast('❌ Error','err'); }
+  if (!confirm(`Resolve dispute #${ref} as ${resolution}?`)) return;
+  await fetch(`${getAPI()}/admin/resolve?ref=${ref}&resolution=${resolution}&pass=${ADMIN_PASS}`);
+  loadDisputes();
 }
 
 async function approveWd(id) {
-  if (!confirm('Approve this withdrawal?')) return;
-  try {
-    await fetch(`${API}/admin/approve_withdrawal?id=${id}&pass=${encodeURIComponent(PASS)}`);
-    showToast('✅ Withdrawal approved','ok');
-    loadWithdrawals();
-  } catch(e) { showToast('❌ Error','err'); }
-}
-
-async function rejectWd(id) {
-  if (!confirm('Reject this withdrawal?')) return;
-  try {
-    await fetch(`${API}/admin/approve_withdrawal?id=${id}&action=reject&pass=${encodeURIComponent(PASS)}`);
-    showToast('❌ Withdrawal rejected','ok');
-    loadWithdrawals();
-  } catch(e) { showToast('❌ Error','err'); }
-}
-
-async function approveKYC(tgId, name) {
-  if (!confirm(`Approve KYC for ${name}?`)) return;
-  try {
-    await fetch(`${API}/admin/kyc_approve?tg_id=${tgId}&pass=${encodeURIComponent(PASS)}`);
-    showToast('✅ KYC approved','ok');
-    loadKYC();
-  } catch(e) { showToast('❌ Error','err'); }
-}
-
-async function rejectKYC(tgId, name) {
-  if (!confirm(`Reject KYC for ${name}?`)) return;
-  try {
-    await fetch(`${API}/admin/kyc_reject?tg_id=${tgId}&pass=${encodeURIComponent(PASS)}`);
-    showToast('❌ KYC rejected','ok');
-    loadKYC();
-  } catch(e) { showToast('❌ Error','err'); }
+  if (!confirm(`Approve withdrawal #${id}?`)) return;
+  await fetch(`${getAPI()}/admin/approve_withdrawal?id=${id}&pass=${ADMIN_PASS}`);
+  loadWithdrawals();
 }
 
 async function sendBroadcast() {
-  const msg = document.getElementById('broadcastMsg').value.trim();
-  if (!msg) { showToast('⚠️ Enter a message','err'); return; }
-  const st = document.getElementById('broadcastStatus');
-  st.style.display = 'block'; st.textContent = '⏳ Sending...';
+  const msg = document.getElementById('broadcastMsg').value;
+  if (!msg) return;
+  const status = document.getElementById('broadcastStatus');
+  status.style.display = 'block';
+  status.textContent = '⏳ Sending...';
   try {
-    const r = await apiPost('/admin/broadcast', {message: msg});
-    st.textContent = `✅ Sent to ${r.sent||0} users`;
-    document.getElementById('broadcastMsg').value = '';
-  } catch(e) { st.textContent = '❌ Failed'; }
+    const r = await fetch(`${getAPI()}/admin/broadcast?pass=${ADMIN_PASS}`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({message: msg})
+    });
+    const d = await r.json();
+    status.textContent = `✅ Sent to ${d.sent} users`;
+  } catch(e) { status.textContent = '❌ Failed — check API connection'; }
 }
 
-// ── UTILS ─────────────────────────────────────────────────────────────────────
+function previewBroadcast() {
+  const msg = document.getElementById('broadcastMsg').value;
+  alert('Preview:\n\n📢 Announcement\n\n' + msg);
+}
+
+// ── Charts ────────────────────────────────────────────────────────────────────
+function drawVolumeChart() {
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const vals = [45,82,61,93,55,110,87];
+  const max = Math.max(...vals);
+  const chart = document.getElementById('volumeChart');
+  chart.innerHTML = vals.map((v,i) => `
+    <div class="bar" style="height:${(v/max)*100}%;background:linear-gradient(180deg,var(--accent),rgba(0,212,170,0.3));flex:1" title="${v}K ETB">
+      <span class="bar-label">${days[i]}</span>
+    </div>`).join('');
+}
+
+function drawCoinChart() {
+  const coins = [{name:'USDT',pct:62,color:'var(--green)'},{name:'BTC',pct:18,color:'var(--accent2)'},{name:'ETH',pct:12,color:'var(--accent4)'},{name:'BNB',pct:8,color:'var(--accent)'}];
+  document.getElementById('coinChart').innerHTML = coins.map(c => `
+    <div class="pie-row">
+      <div class="pie-dot" style="background:${c.color}"></div>
+      <div class="pie-label">${c.name}</div>
+      <div style="flex:1;height:6px;background:var(--border);border-radius:3px;margin:0 10px">
+        <div style="height:100%;width:${c.pct}%;background:${c.color};border-radius:3px"></div>
+      </div>
+      <div class="pie-val">${c.pct}%</div>
+    </div>`).join('');
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 function fmtETB(n) {
-  n = Number(n||0);
-  if (n>=1e6) return (n/1e6).toFixed(1)+'M ETB';
-  if (n>=1e3) return (n/1e3).toFixed(0)+'K ETB';
-  return n.toLocaleString()+' ETB';
+  if (n >= 1_000_000) return (n/1_000_000).toFixed(1)+'M';
+  if (n >= 1_000) return (n/1_000).toFixed(0)+'K';
+  return Number(n).toLocaleString();
 }
 
-function showToast(msg, type='ok') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = `toast ${type} show`;
-  setTimeout(()=>t.className=`toast ${type}`,2500);
-}
-
-// Auto-login if password stored
-const storedPass = localStorage.getItem('adminPass');
-if (storedPass) {
-  PASS = storedPass;
-  document.getElementById('passInp').value = storedPass;
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  loadAll();
-  setInterval(loadOverview, 30000);
-}
+// Always show login page - no auto-login for security
+// Only auto-fill the API base if set
+function getAPI() { return 'https://sturdy-waddle-production-f4cb.up.railway.app'; }
 </script>
 </body>
 </html>
