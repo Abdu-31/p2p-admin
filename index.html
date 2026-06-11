@@ -182,7 +182,6 @@ textarea.inp:focus{border-color:rgba(0,212,170,0.4)}
 
 <script>
 const API = 'https://sturdy-waddle-production-f4cb.up.railway.app';
-const ADMIN_PASS = localStorage.getItem('adminPass') || '';
 let PASS = '';
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────────
@@ -304,7 +303,7 @@ async function loadUsers() {
             <button class="abtn b" onclick="msgUser(${u.telegram_id})">💬 Message</button>
           </div>
         </div>
-        <div class="trow-right"><div class="trow-val" style="color:${u.is_banned?'var(--red)':'var(--green)'">${u.is_banned?'Banned':'Active'}</div></div>
+        <div class="trow-right"><div class="trow-val" style="color:${u.is_banned ? 'var(--red)' : 'var(--green)'}">${u.is_banned ? 'Banned' : 'Active'}</div></div>
       </div>`).join('');
   } catch(e) { el.innerHTML = '<div class="loading">❌ Failed to load users</div>'; }
 }
