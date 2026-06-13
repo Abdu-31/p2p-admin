@@ -86,7 +86,7 @@ textarea.inp:focus{border-color:rgba(0,212,170,0.4)}
 <body>
 
 <!-- LOGIN -->
-<div id="loginPage" class="login-wrap">
+<div id="loginPage" class="login-wrap" style="display:flex">
   <div class="login-card">
     <div class="login-logo">🤖</div>
     <div class="login-title">Admin Panel</div>
@@ -105,7 +105,10 @@ textarea.inp:focus{border-color:rgba(0,212,170,0.4)}
       <div class="topbar-title">P2P Ethiopian</div>
       <div class="topbar-sub"><span class="live-dot"></span>Admin Panel · <span id="lastUpd">—</span></div>
     </div>
-    <div style="font-size:11px;color:var(--muted)" id="adminPassDisplay"></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:11px;color:var(--muted)" id="adminPassDisplay"></span>
+      <button onclick="logout()" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:var(--red);font-size:10px;font-weight:700;padding:4px 10px;border-radius:7px;cursor:pointer;font-family:inherit">Logout</button>
+    </div>
   </div>
 
   <!-- OVERVIEW -->
@@ -186,38 +189,54 @@ let PASS = '';
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────────
 async function doLogin() {
-  PASS = document.getElementById('passInp').value;
-  const customAPI = document.getElementById('apiInp').value.trim().replace(/\/$/, '');
-  const apiUrl = customAPI || API;
+  const passInput = document.getElementById('passInp').value.trim();
+  if (!passInput) {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('loginErr').textContent = '❌ Enter password';
+    return;
+  }
+
+  const btn = document.querySelector('.login-btn');
+  btn.textContent = '⏳ Verifying...';
+  btn.disabled = true;
 
   try {
-    const res = await fetch(`${apiUrl}/admin/verify?pass=${encodeURIComponent(PASS)}`);
+    const res = await fetch(`${API}/admin/verify?pass=${encodeURIComponent(passInput)}`);
     const d = await res.json();
     if (d.ok) {
-      localStorage.setItem('adminPass', PASS);
-      document.getElementById('loginPage').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      document.getElementById('adminPassDisplay').textContent = '✅ Logged in';
-      loadAll();
-      setInterval(loadOverview, 30000);
+      // ONLY store after server confirms
+      PASS = passInput;
+      localStorage.setItem('adminPass', btoa(passInput)); // encode for slight obfuscation
+      showDashboard();
     } else {
       document.getElementById('loginErr').style.display = 'block';
-      document.getElementById('loginErr').textContent = '❌ Wrong password';
+      document.getElementById('loginErr').textContent = '❌ Wrong password. Access denied.';
+      btn.textContent = '🔐 Login';
+      btn.disabled = false;
     }
   } catch(e) {
-    // Try with stored pass
-    const stored = localStorage.getItem('adminPass');
-    if (stored) {
-      PASS = stored;
-      document.getElementById('loginPage').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      loadAll();
-      setInterval(loadOverview, 30000);
-    } else {
-      document.getElementById('loginErr').style.display = 'block';
-      document.getElementById('loginErr').textContent = '❌ Cannot connect to API: ' + apiUrl;
-    }
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('loginErr').textContent = '❌ Cannot connect to server. Check Railway is running.';
+    btn.textContent = '🔐 Login';
+    btn.disabled = false;
   }
+}
+
+function showDashboard() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('adminPassDisplay').textContent = '✅ Admin';
+  loadAll();
+  setInterval(loadOverview, 30000);
+}
+
+function logout() {
+  PASS = '';
+  localStorage.removeItem('adminPass');
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('passInp').value = '';
+  document.getElementById('loginErr').style.display = 'none';
 }
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
@@ -500,16 +519,25 @@ function showToast(msg, type='ok') {
 }
 
 // Auto-login if password stored
-window.addEventListener('DOMContentLoaded', () => {
-  const storedPass = localStorage.getItem('adminPass');
-  if (storedPass) {
-    PASS = storedPass;
-    document.getElementById('passInp').value = storedPass;
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    document.getElementById('adminPassDisplay').textContent = '✅ Logged in';
-    loadAll();
-    setInterval(loadOverview, 30000);
+window.addEventListener('DOMContentLoaded', async () => {
+  const stored = localStorage.getItem('adminPass');
+  if (stored) {
+    try {
+      const decoded = atob(stored);
+      // Always verify with server — never skip
+      const res = await fetch(`${API}/admin/verify?pass=${encodeURIComponent(decoded)}`);
+      const d = await res.json();
+      if (d.ok) {
+        PASS = decoded;
+        showDashboard();
+      } else {
+        // Stored password is wrong — clear it
+        localStorage.removeItem('adminPass');
+      }
+    } catch(e) {
+      // Server unreachable — do NOT auto-login for security
+      localStorage.removeItem('adminPass');
+    }
   }
 });
 </script>
