@@ -391,12 +391,14 @@ async function loadKYC() {
     el.innerHTML = kycs.map(k => `
       <div class="trow">
         <div class="trow-main">
-          <div class="trow-name">🪪 User #${k.user_id} <span class="badge ${k.status==='approved'?'g':k.status==='pending'?'y':'r'}">${k.status}</span></div>
+          <div class="trow-name">🪪 ${k.user_name||'User'} <span class="badge ${k.status==='approved'?'g':k.status==='pending'?'y':'r'}">${k.status}</span></div>
+          <div class="trow-sub">TG ID: ${k.user_telegram_id||k.user_id}</div>
           <div class="trow-sub">Submitted: ${(k.created_at||'').slice(0,16)}</div>
+          <div class="trow-sub" style="color:var(--muted2);font-size:10px">⚠️ View ID photos via Telegram bot (photos sent directly to your bot chat)</div>
           ${k.status==='pending'?`<div class="action-row">
-            <button class="abtn g" onclick="approveKYC(${k.user_telegram_id},'${k.user_name}')">✅ Approve</button>
-            <button class="abtn r" onclick="rejectKYC(${k.user_telegram_id},'${k.user_name}')">❌ Reject</button>
-          </div>`:''}
+            <button class="abtn g" onclick="approveKYC(${k.user_telegram_id||k.user_id},'${k.user_name||'User'}')">✅ Approve KYC</button>
+            <button class="abtn r" onclick="rejectKYC(${k.user_telegram_id||k.user_id},'${k.user_name||'User'}')">❌ Reject KYC</button>
+          </div>`:'<div style="font-size:10px;color:var(--muted);margin-top:6px">Reviewed ✅</div>'}
         </div>
       </div>`).join('');
   } catch(e) { el.innerHTML = '<div class="loading">No KYC data available</div>'; }
@@ -413,7 +415,14 @@ async function banUser(tgId, name) {
 }
 
 function msgUser(tgId) {
-  window.open(`tg://user?id=${tgId}`);
+  // Try deep link first, fallback to web
+  const link = `https://t.me/user?id=${tgId}`;
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.openTelegramLink(link);
+  } else {
+    window.open(`tg://openmessage?user_id=${tgId}`, '_blank');
+    setTimeout(() => window.open(link, '_blank'), 500);
+  }
 }
 
 async function resolveDispute(ref, resolution) {
