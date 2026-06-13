@@ -224,8 +224,10 @@ async function doLogin() {
 function goPage(name) {
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.bn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('pg-'+name).classList.add('active');
-  document.getElementById('bn-'+name).classList.add('active');
+  const pg = document.getElementById('pg-'+name);
+  const bn = document.getElementById('bn-'+name);
+  if (pg) pg.classList.add('active');
+  if (bn) bn.classList.add('active');
   loadPage(name);
 }
 
@@ -498,15 +500,18 @@ function showToast(msg, type='ok') {
 }
 
 // Auto-login if password stored
-const storedPass = localStorage.getItem('adminPass');
-if (storedPass) {
-  PASS = storedPass;
-  document.getElementById('passInp').value = storedPass;
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  loadAll();
-  setInterval(loadOverview, 30000);
-}
+window.addEventListener('DOMContentLoaded', () => {
+  const storedPass = localStorage.getItem('adminPass');
+  if (storedPass) {
+    PASS = storedPass;
+    document.getElementById('passInp').value = storedPass;
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('adminPassDisplay').textContent = '✅ Logged in';
+    loadAll();
+    setInterval(loadOverview, 30000);
+  }
+});
 </script>
 </body>
 </html>
